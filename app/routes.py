@@ -6,7 +6,7 @@ main = Blueprint('main', __name__)
 @main.route('/users', methods=['POST'])
 def create_user():
     data = request.json
-    user = User.create(data['username'], data['email'])
+    user = User.create(data['username'], data['email'], data["password"])
     return jsonify(user), 201
  
 @main.route('/users/<username>', methods=['GET'])

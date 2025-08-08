@@ -2,10 +2,11 @@ from . import mongo
 
 class User:
     @staticmethod
-    def create(username, email):
+    def create(username, email, password):
         user = {
             'username': username,
-            'email': email
+            'email': email,
+            "password": password
         }
         mongo.db.users.insert_one(user)
         return user
