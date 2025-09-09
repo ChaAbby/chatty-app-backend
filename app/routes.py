@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+import datetime
 from .models import *
  
 main = Blueprint('main', __name__)
@@ -140,3 +141,30 @@ def delete_chat(id):
         return jsonify({'message': f'Chat {id} was deleted'}), 200
     return jsonify({'message': f'Chat {id} was not deleted, please check that this is a valid chat id'},400)
 
+# Messages Route
+@main.route('/messages', methods=["POST"])
+def create_message():
+    data = request.json
+
+    message = Message.create(data['chatId'], data['senderId'], data['content'], data['messageType'], datetime.datetime.now(), None, False, False)
+    return jsonify(message), 201
+
+@main.route('/messages/<id>', methods=["GET"])
+def get_message(id):
+    print('hi')
+    message = Message.get_message(id)
+    print(message)
+    if message:
+        return jsonify(message), 200
+    return jsonify({'error': 'Message with id: {id} was not found.'}), 404
+
+@main.route('/messages/<id>', methods=['PUT'])
+def update_message(id):
+    data = request.json
+    data['edited'] = True
+    data['updateAt'] = datetime.datetime.now()
+    updated_message = Message.update_message(id, data)
+
+    if updated_message.modified_count:
+        return jsonify({'message': f'Message with id: {id} was updated'}), 200
+    return jsonify({'message': f'Message with id: {id} was not updated'})

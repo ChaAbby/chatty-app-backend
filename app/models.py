@@ -33,10 +33,6 @@ class User:
     
     @staticmethod
     def delete(id):
-        # chats = Chat.get_by_user_id(id)
-        # for chat in chats:
-        #     pass
-        #     # remove user from chats
         return mongo.db.users.delete_onf({'_id': ObjectId(id)})
     
 class Chat:
@@ -99,3 +95,27 @@ class Chat:
     @staticmethod
     def delete(id):
         return mongo.db.chats.delete_one({"_id": ObjectId(id)})
+
+class Message:
+    @staticmethod
+    def create(chatId, senderId, content, messageType: str, createdAt, updatedAt, edited: bool, deleted: bool):
+        message = {
+            'chatId': ObjectId(chatId),
+            'senderId': ObjectId(senderId),
+            'content': content,
+            'messageType': messageType,
+            'createdAt': createdAt,
+            'updatedAt': updatedAt,
+            'edited': edited,
+            'deleted': deleted,
+        }
+        mongo.db.messages.insert_one(message)
+        return message
+    @staticmethod
+    def get_message(id):
+        return mongo.db.messages.find_one({"_id": ObjectId(id)})
+    def update_message(id,data):
+        return mongo.db.messages.update_one(
+            {'_id': ObjectId(id)},
+            {'$set': data }
+        )
